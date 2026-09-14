@@ -49,6 +49,10 @@ reused by any later step's `example.ts`, the same way step 04 reused step
 - [ ] **14 — prompt caching, token cost & error handling (deepened)** — `cache_control` breakpoints, reading `usage.cache_read_input_tokens` to verify hits, and revisiting step 05's error handling with caching-aware retry behavior.
 - [ ] **15 — Managed Agents** — the platform-native capstone: `Agent` + `Environment` + `Session` objects, where the DIY versions of 07–09 get a "real" implementation — `multiagent: {type: "coordinator"}` for sub-agents/orchestration, Memory Stores + session lifecycle for memory/resume, and MCP via vault-stored credentials instead of raw connector auth.
 
+## Bonus (not part of the numbered CCD-F track)
+
+- [x] **Claude Agent SDK vs. DIY** (`src/examples/bonus-claude-agent-sdk/`) — re-implements step 07's exact Python/Go/Rust comparison using `@anthropic-ai/claude-agent-sdk`'s `AgentDefinition` + subagents instead of `Promise.all`, for a direct side-by-side. This is a **different product** from the Messages API (`@anthropic-ai/sdk`) every numbered step uses — it runs Claude Code's own agent loop, with real tools (scoped to `tools: []` here for safety) and non-deterministic delegation (Claude decides *whether* to delegate, not your code). Deliberately kept separate from 01–15 since CCD-F is scoped to the raw API. See its own `notes.md` for the full comparison table and two genuine findings hit while building it (Claude sometimes skips delegation entirely; background subagents can produce multiple `result` messages per query).
+
 ## Before moving to step 04 — things to read / try on step 03
 
 1. Read `src/examples/03-tool-loop.ts` top to bottom alongside the run

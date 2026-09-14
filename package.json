@@ -14,12 +14,14 @@
     "07": "tsx src/examples/07-sub-agents/example.ts",
     "08": "tsx src/examples/08-multi-agent-orchestration/chaining.ts",
     "08b": "tsx src/examples/08-multi-agent-orchestration/routing.ts",
+    "bonus:agent-sdk": "tsx src/examples/bonus-claude-agent-sdk/agent-sdk.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.270",
     "@anthropic-ai/sdk": "^0.125.0",
     "dotenv": "^17.4.2",
     "zod": "^4.6.5"
