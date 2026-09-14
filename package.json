@@ -11,6 +11,7 @@
     "04": "tsx src/examples/04-tool-runner.ts",
     "05": "tsx src/examples/05-error-handling.ts",
     "06": "tsx src/examples/06-guardrails/example.ts",
+    "07": "tsx src/examples/07-sub-agents/example.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
