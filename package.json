@@ -1,0 +1,28 @@
+{
+  "name": "claude-certification-prep",
+  "version": "1.0.0",
+  "description": "Agentic development boilerplate using the Anthropic TypeScript SDK",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "01": "tsx src/examples/01-basic-message.ts",
+    "02": "tsx src/examples/02-streaming.ts",
+    "03": "tsx src/examples/03-tool-loop.ts",
+    "04": "tsx src/examples/04-tool-runner.ts",
+    "05": "tsx src/examples/05-error-handling.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "dotenv": "^17.4.2",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}
