@@ -12,6 +12,8 @@
     "05": "tsx src/examples/05-error-handling.ts",
     "06": "tsx src/examples/06-guardrails/example.ts",
     "07": "tsx src/examples/07-sub-agents/example.ts",
+    "08": "tsx src/examples/08-multi-agent-orchestration/chaining.ts",
+    "08b": "tsx src/examples/08-multi-agent-orchestration/routing.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

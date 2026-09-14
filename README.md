@@ -2,7 +2,7 @@
 
 A step-by-step TypeScript boilerplate for learning **agentic development with
 the Anthropic SDK** — built while preparing for Anthropic's **Claude
-Certified Developer – Foundation (CCD-F)** course.
+Certified Developer – Foundation (CCDV-F)** course.
 
 This is **not** a production template. It's a learning log: each step is a
 small, standalone, runnable example that builds on the last, going from a
