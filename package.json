@@ -10,6 +10,7 @@
     "03": "tsx src/examples/03-tool-loop.ts",
     "04": "tsx src/examples/04-tool-runner.ts",
     "05": "tsx src/examples/05-error-handling.ts",
+    "06": "tsx src/examples/06-guardrails/example.ts",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

@@ -5,7 +5,23 @@ covers the ground the Claude Certified Developer Foundation course expects
 (Messages API fundamentals, tool use, streaming, error handling).
 
 Each step is a standalone runnable file under `src/examples/`. Run one with
-`npx tsx src/examples/NN-name.ts` (step 01 also has an npm script: `npm run 01`).
+`npx tsx src/examples/NN-name.ts` (or `npm run NN`, e.g. `npm run 01`).
+
+**Folder pattern from step 06 onward:** steps 01–05 are simple, single-file
+mechanics (one API concept each) and are covered well enough by this file's
+own "before moving to step N" sections. Starting at step 06, concept-heavy
+topics get their own folder — `src/examples/NN-topic/` — containing:
+
+- `example.ts` (or more, if a step needs several) — the runnable code
+- `notes.md` — plain-language definitions: what the concept is, why it
+  exists, where it's used in practice
+- `questions.md` — self-test questions with answers hidden behind
+  `<details>` spoiler blocks, to check understanding before moving on
+
+`src/tools/` and `src/agent/` stay shared across steps — a tool or helper
+defined once (e.g. `src/tools/email.ts`, `src/agent/guardrails.ts`) can be
+reused by any later step's `example.ts`, the same way step 04 reused step
+03's tool handlers.
 
 ## Setup (done)
 
@@ -22,7 +38,7 @@ Each step is a standalone runnable file under `src/examples/`. Run one with
 - [x] **03 — tool use, manual loop** (`src/tools/calculator.ts`, `src/tools/weather.ts`, `src/examples/03-tool-loop.ts`) — hand-written tool schemas + `while` loop on `stop_reason`. Ran successfully — Claude called both tools **in parallel in one turn**, we executed both and sent both `tool_result`s back in a single message, then it answered.
 - [x] **04 — tool use, SDK Tool Runner** (`src/tools/calculator.zod.ts`, `src/tools/weather.zod.ts`, `src/examples/04-tool-runner.ts`) — same two tools (schemas now Zod, wrapping the *same* `runCalculator`/`runWeather` handlers from step 03), driven by `client.beta.messages.toolRunner()`. Ran successfully — identical outcome to step 03, no hand-written loop.
 - [x] **05 — error handling** (`src/examples/05-error-handling.ts`) — typed exception chain, most-specific-first. Ran successfully against 4 cases: `NotFoundError` (bad model ID), `BadRequestError` (empty `messages[]`), a client-side `AnthropicError` (see note below), and a normal success.
-- [ ] **06 — guardrails: tool-execution gating** — a confirmation/permission check before a tool actually runs (e.g. mark a tool `requiresConfirmation` and gate `executeTool` behind a prompt), the DIY analog of Managed Agents' `permission_policy: always_ask`.
+- [x] **06 — guardrails: tool-execution gating** (`src/examples/06-guardrails/` — see below) — a `GuardedTool` registry (`requiresConfirmation: boolean`) plus a terminal confirmation prompt gating the (mock) `send_email` tool, while `calculator`/`weather` stay auto-allowed. Ran both paths live: **allow** → email "sent", Claude summarizes; **deny** → `tool_result` with `is_error: true` and a denial message, Claude gracefully reports it couldn't complete that step instead of erroring out.
 - [ ] **07 — sub-agents** — orchestrator-worker pattern: the main script spawns multiple independent `messages.create()` calls (one per subtask) itself, in code — no platform feature involved yet, just parallel API calls + aggregation.
 - [ ] **08 — multi-agent orchestration** — patterns for coordinating several of those sub-agents: fan-out/fan-in (parallel, merge results), and sequential handoff (one agent's output feeds the next).
 - [ ] **09 — agent memory, sessions & resume/forking (DIY)** — persist the `messages` array to disk/SQLite between runs; "resume" = reload and continue; "fork" = branch the saved array at a point and continue two ways from there.
@@ -137,4 +153,33 @@ differently from non-retryable ones (400, 404).
 5. Optional reading (official docs):
    - Errors: https://platform.claude.com/docs/en/api/errors
 
-When you're ready, say so and I'll write step 06 (tool-execution guardrails).
+## Before moving to step 07 — things to read / try on step 06
+
+1. Read `src/agent/guardrails.ts` — `confirm()` is the entire guardrail
+   mechanism: open a `readline` interface on the real terminal, ask a
+   yes/no question, return a boolean. Everything else in
+   `06-guardrails.ts` is just step 03's loop with one `if
+   (guarded.requiresConfirmation)` branch inserted before execution.
+2. Notice **where** the check happens: gating is per-tool metadata
+   (`requiresConfirmation` on the `GuardedTool` entry), not something
+   Claude decides. Claude doesn't know `send_email` is gated — it just
+   calls the tool normally; your code intercepts before running the
+   handler. This mirrors Managed Agents' `permission_policy`, which is
+   also set by you on the tool config, not requested by the model.
+3. On denial, the loop still sends back a `tool_result` with `is_error:
+   true` (same shape as a thrown-error case in step 03) — a denial isn't
+   a crash or an early exit, it's just another kind of tool failure Claude
+   has to see and react to. That's why the deny run above still produced a
+   coherent final answer instead of an unhandled rejection.
+4. Try flipping `calculatorTool`'s `requiresConfirmation` to `true` and
+   re-run with `echo n | npm run 06` (or interactively) — since the user's
+   request needs the weather *before* it can compose the email, but doesn't
+   strictly need the calculator at all here, this is a good way to see a
+   confirmation gate on a tool Claude may not even end up calling.
+5. Try adding a second gated tool (e.g. a mock `delete_file`) and confirm
+   the loop asks once per gated tool call, in order — not all at once.
+6. Optional reading (official docs):
+   - Tool use overview: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+   - Managed Agents permission policies (the platform-native version of this pattern): see `shared/managed-agents-tools.md` in the claude-api skill, or https://platform.claude.com/docs/en/managed-agents/permission-policies
+
+When you're ready, say so and I'll write step 07 (sub-agents).
